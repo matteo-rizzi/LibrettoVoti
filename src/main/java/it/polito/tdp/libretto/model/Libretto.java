@@ -3,6 +3,7 @@ package it.polito.tdp.libretto.model;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -21,10 +22,10 @@ public class Libretto {
 	public Libretto() {
 		super();
 	}
-	
+
 	/**
-	 * Copy constructor
-	 * "Shallow" (copia superficiale)
+	 * Copy constructor "Shallow" (copia superficiale)
+	 * 
 	 * @param lib
 	 */
 	public Libretto(Libretto lib) {
@@ -161,8 +162,8 @@ public class Libretto {
 
 		for (Voto v : this.voti) {
 			Voto vTemp = new Voto(v);
-		//	Voto vTemp = v.clone();
-			
+			// Voto vTemp = v.clone();
+
 			if (vTemp.getVoto() >= 24) {
 				vTemp.setVoto(vTemp.getVoto() + 2);
 				if (vTemp.getVoto() > 30)
@@ -175,28 +176,39 @@ public class Libretto {
 
 		return nuovo;
 	}
-	
+
 	/**
-	 * Riordina i voti presenti nel libretto corrente
-	 * alfabeticamente per corso.
+	 * Riordina i voti presenti nel libretto corrente alfabeticamente per corso.
 	 */
 	public void ordinaPerCorso() {
 		Collections.sort(this.voti);
 	}
-	
+
 	public void ordinaPerVoto() {
 		Collections.sort(this.voti, new ConfrontaVotiPerValutazione());
-	}
+		
+		// Comparator definito con anonymous inline class
+		this.voti.sort(new Comparator<Voto>() {
+			@Override
+			public int compare(Voto o1, Voto o2) {
+				return o2.getVoto() - o1.getVoto();
+			}
+		});
+		
+		// Comparator definito con una "lambda function"
+		this.voti.sort( (Voto o1, Voto o2) -> ( o2.getVoto() - o1.getVoto()));
 	
+	}
+
 	/**
 	 * Elimina dal libretto tutti i voti <24
 	 */
 	public void cancellaVotiScarsi() {
 		List<Voto> daRimuovere = new ArrayList<>();
-		for(Voto v : this.voti)
-			if(v.getVoto() < 24)
+		for (Voto v : this.voti)
+			if (v.getVoto() < 24)
 				daRimuovere.add(v);
-		
+
 		this.voti.removeAll(daRimuovere);
 //		for (Voto v : daRimuovere)
 //			this.voti.remove(v);
